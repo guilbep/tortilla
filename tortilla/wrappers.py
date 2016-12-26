@@ -258,7 +258,7 @@ class Wrap(object):
         self._part = part[:-1] if part[-1:] == '/' else part
         self._url = None
         self._parent = parent or Client(debug=debug, cache=cache, **kwargs)
-        self.config = Bunch({
+        self._config = Bunch({
             'headers': bunchify(headers) if headers else Bunch(),
             'params': bunchify(params) if params else Bunch(),
             'debug': debug,
@@ -303,7 +303,7 @@ class Wrap(object):
         :param options: (optional) Arguments accepted by the
             :class:`Wrap` initializer
         """
-        self.config.update(**options)
+        self._config.update(**options)
 
         if len(parts) == 0:
             return self
@@ -327,7 +327,7 @@ class Wrap(object):
             return self.__dict__[part]
         except KeyError:
             self.__dict__[part] = Wrap(part=part, parent=self,
-                                       debug=self.config.get('debug'))
+                                       debug=self._config.get('debug'))
             return self.__dict__[part]
 
     def request(self, method, *parts, **options):
@@ -361,7 +361,7 @@ class Wrap(object):
                 # the last part constructs the URL
                 options['url'] = self.url()
 
-            for key, value in six.iteritems(self.config):
+            for key, value in six.iteritems(self._config):
                 # set the defaults in the options
                 if value is not None:
                     if isinstance(value, dict):

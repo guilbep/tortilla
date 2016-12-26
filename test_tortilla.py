@@ -141,14 +141,14 @@ class TestTortilla(unittest.TestCase):
         self.assertEqual(self.api.cache.get(), "this should not be returned")
 
     def test_request_delay(self):
-        self.api.config.delay = 0.5
+        self.api._config.delay = 0.5
         self.api.test.get()
         self.assertGreaterEqual(self._time_function(self.api.test.get), 0.5)
         self.assertGreaterEqual(self._time_function(self.api.test.get, delay=0.1), 0.1)
         self.assertGreaterEqual(self._time_function(self.api.test.get), 0.5)
 
         # do not delay the rest of the tests
-        self.api.config.delay = 0
+        self.api._config.delay = 0
 
     def test_request_methods(self):
         self.assertEqual(self.api.awesome.tweet.post().message, "Success!")
@@ -163,19 +163,19 @@ class TestTortilla(unittest.TestCase):
 
     def test_wrap_config(self):
         self.api.stuff(debug=True, extension='json', cache_lifetime=5, silent=True)
-        self.assertTrue(self.api.stuff.config.debug)
-        self.assertEqual(self.api.stuff.config.extension, 'json')
-        self.assertEqual(self.api.stuff.config.cache_lifetime, 5)
-        self.assertTrue(self.api.stuff.config.silent)
+        self.assertTrue(self.api.stuff._config.debug)
+        self.assertEqual(self.api.stuff._config.extension, 'json')
+        self.assertEqual(self.api.stuff._config.cache_lifetime, 5)
+        self.assertTrue(self.api.stuff._config.silent)
 
         self.api.stuff(debug=False, extension='xml', cache_lifetime=8, silent=False)
-        self.assertFalse(self.api.stuff.config.debug)
-        self.assertEqual(self.api.stuff.config.extension, 'xml')
-        self.assertEqual(self.api.stuff.config.cache_lifetime, 8)
-        self.assertFalse(self.api.stuff.config.silent)
+        self.assertFalse(self.api.stuff._config.debug)
+        self.assertEqual(self.api.stuff._config.extension, 'xml')
+        self.assertEqual(self.api.stuff._config.cache_lifetime, 8)
+        self.assertFalse(self.api.stuff._config.silent)
 
         self.api.stuff('more', 'stuff', debug=True)
-        self.assertTrue(self.api.stuff.config.debug)
+        self.assertTrue(self.api.stuff._config.debug)
 
     def test_wrap_chain(self):
         self.assertIs(self.api.chained.wrap.stuff, self.api('chained').wrap('stuff'))
